@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -64,6 +65,20 @@ func Test_prompt(t *testing.T) {
 	wanted := "-> "
 	if string(b) != wanted {
 		t.Errorf("wanted %s but got %s", wanted, string(b))
+	}
+	os.Stdout = stdOutOld
+}
+
+func Test_intro(t *testing.T) {
+	stdOutOld := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+	intro()
+	w.Close()
+	b, _ := io.ReadAll(r)
+	wanted := "Enter a whole number"
+	if !strings.Contains(string(b), wanted) {
+		t.Errorf("wanted %s in the output but got %s", wanted, string(b))
 	}
 	os.Stdout = stdOutOld
 }
