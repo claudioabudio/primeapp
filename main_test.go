@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io"
+	"os"
 	"testing"
 )
 
@@ -50,4 +52,18 @@ func Test_isPrime_withTable(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_prompt(t *testing.T) {
+	stdOutOld := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+	prompt()
+	w.Close()
+	b, _ := io.ReadAll(r)
+	wanted := "-> "
+	if string(b) != wanted {
+		t.Errorf("wanted %s but got %s", wanted, string(b))
+	}
+	os.Stdout = stdOutOld
 }
